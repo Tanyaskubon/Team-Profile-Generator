@@ -1,12 +1,14 @@
 const Manager=require ('../lib/Manager')
 
-test(" match employee",() => {
-    const manager = new Manager ('name',12,'email',1234567);
-  
-    // test for success match
-    expect(manager.getName()).toMatch('name');
+test('creates  Manager object', () => {
+    const manager = new Manager('Tanya', 12, 'tanyaskubon25@gmail.com', 2);
     
-    expect(manager.getEmail()).toMatch('email');
-    
-})
+    expect(manager.officeNumber).toEqual(expect.any(Number));
+});
 
+test('gets role of employee', () => {
+    const manager = new Manager('Tanya', 12, 'tanyaskubon25@gmail.com', 2);
+
+
+    expect(manager.getRole()).toEqual("Manager");
+}); 
