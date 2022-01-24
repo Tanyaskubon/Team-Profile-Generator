@@ -9,10 +9,15 @@ const Manager = require('./lib/Manager')
 const Engineer = require('./lib/Engineer')
 const Intern = require('./lib/Intern')
 
+const OUTPUT_DIR = path.resolve(__dirname, "output")
+const outputPath = path.join(OUTPUT_DIR, "team.html");
+
+
+
 const employeeArray = [];
 
-const addManager = () => {
-  return inquirer.prompt([
+const Manager = () => {
+  inquirer.prompt([
 
     {
       name: "manager name",
@@ -37,21 +42,42 @@ const addManager = () => {
     },
 
 
-
   ]).then(managerInput => {
     const { name, id, email, officeNumber } = managerInput;
     const manager = new Manager(name, id, email, officeNumber);
 
     employeeArray.push(manager);
-  })
+    creatTeam()
+  });
 
-}; 
+}
 
-const addEmployee = () => {
-  console.log(`
-  `);
+function creatTeam() {
+  inquirer.prompt([
+    {
+      name: "addEmloyee",
+      type: "list",
+      message: "Choose your employee's role.",
+      choices: ['Engineer', 'Intern']
+    },
+  ]).then(userChoice => {
+    switch (userChoice.addEmployee) {
+      case "Engineer":
+        engineerInput();
+        break;
+      case "Intern":
+        internInput();
+        break;
+      default:
+        buildTeam()
+    }
+  });
 
-  return inquirer.prompt([
+}
+
+const engineerInput = () => {
+
+  inquirer.prompt([
     {
       name: "role",
       type: "list",
@@ -61,83 +87,70 @@ const addEmployee = () => {
     {
       name: "name",
       type: "input",
-      message: "Enter the employee's name.",
+      message: "Enter the engineer's name.",
     },
     {
       name: "id",
       type: "input",
-      message: "Enter the employee's id.",
+      message: "Enter the engeneer's id.",
     },
     {
       name: "email",
       type: "input",
-      message: "Enter the employee's email.",
+      message: "Enter the engineers's email.",
     },
     {
       name: "github",
       type: "input",
       message: "Enter the employee's github username.",
     },
-    {
-      name: "school",
-      type: "input",
-      message: "Enter the interns's school.",
-    },
-    {
-      name: "confirmAddEmployee",
-      type: "confirm",
-      message: "Do you wish to add more employees?",
-    },
-  ])
-  .then(employeeData => {
 
-    let { name, id, email, role, github, school, confirmAddEmployee } = employeeData; 
-    let employee; 
+  ]).then(engineerInput => {
+    const { name, id, email, github } = engineerInput;
+    const engineer = new Engineer(name, id, email, github);
 
-    if (role === "Engineer") {
-        employee = new Engineer (name, id, email, github);
+    employeeArray.push(engineer);
+    creatTeam()
+  });
+  const internInput = () => {
 
-        console.log(employee);
+    inquirer.prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "Enter the intern's name.",
+      },
+      {
+        name: "id",
+        type: "input",
+        message: "Enter the intern's id.",
+      },
+      {
+        name: "email",
+        type: "input",
+        message: "Enter the intern's email.",
+      },
+      {
+        name: "school",
+        type: "input",
+        message: "Enter the interns's school.",
+      },
 
-    } else if (role === "Intern") {
-        employee = new Intern (name, id, email, school);
+    ])
 
-        console.log(employee);
-    }
+      .then(internInput => {
+        const { name, id, email, school } = internInput;
+        const intern = new Intern(name, id, email, school);
 
-    employeeArray.push(employee); 
+        employeeArray.push(intern);
+        creatTeam()
+      })
+  }
+}
+function buildTeam() {
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR)
 
-    if (confirmAddEmployee) {
-        return addEmployee(employeeArray); 
-    } else {
-        return employeeArray;
-    }
-})
-
-};
-const writeFile = data => {
-  fs.writeFile('./dist/index.html', data, err => {
-
-      if (err) {
-          console.log(err);
-          return;
-      
-      } else {
-          console.log("Your team profile has been successfully created! Please check out the index.html")
-      }
-  })
-}; 
-
-addManager()
-.then(addEmployee)
-.then(employeeArray => {
-  return generateHTML(employeeArray);
-})
-.then(pageHTML => {
-  return writeFile(pageHTML);
-})
-.catch(err => {
-console.log(err);
-});
-
-
+  }
+  fs.writeFileSync(outputPath,generateHTML(employeeArray), 'utf-8');
+}
