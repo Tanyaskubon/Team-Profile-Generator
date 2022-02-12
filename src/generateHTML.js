@@ -1,5 +1,8 @@
 
 
+
+
+
 const generateTeam = team => {
     const generateManager = manager => {
         return `
@@ -10,11 +13,59 @@ const generateTeam = team => {
     <p class="card-text">${manager.getEmail()}</p>
     <p class="card-text">${manager.getRole()}</p>
     <p class="card-text">${manager.getOfficeNumber()}</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
+    
   </div>
 </div>
         `
     }
+    const generateEngineer = engineer => {
+        return `
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">${engineer.getName()}</h5>
+    <p class="card-text">${engineer.getId()}</p>
+    <p class="card-text">${engineer.getEmail()}</p>
+    <p class="card-text">${engineer.getRole()}</p>
+    <p class="card-text">${engineer.getGithub()}</p>
+    
+  </div>
+</div>
+        `
+    }
+    const generateIntern = intern => {
+        return `
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">${intern.getName()}</h5>
+    <p class="card-text">${intern.getId()}</p>
+    <p class="card-text">${intern.getEmail()}</p>
+    <p class="card-text">${intern.getRole()}</p>
+    <p class="card-text">${intern.getSchool()}</p>
+    
+  </div>
+</div>
+        `
+    }
+    const html = [];
+    html.push(team
+        .filter(employee => employee.getRole()=== 'Manager')
+        .map(manager => generateManager(manager)))
+
+        html.push(team
+            .filter(employee => employee.getRole()=== 'Engineer')
+            .map(engineer => generateEngineer(engineer))
+            .join(''))
+
+
+            html.push(team
+                .filter(employee => employee.getRole()=== 'Intern')
+                .map(intern => generateIntern(intern))
+                .join(''))
+                
+                return html.join('');
+        
+    
+
 }
 
 
